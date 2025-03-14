@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Automated Viral Master System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-dark bg-primary mb-4">
+            <span class="navbar-brand mb-0 h1">Hyper-Automated Viral Master System</span>
+            <div class="system-status">
+                <span id="status-indicator" class="status-active"></span>
+                <span id="status-text">System Active</span>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="card sidebar">
+                    <div class="card-header">
+                        <h5>System Components</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group component-list" id="component-list">
+                            <!-- Components will be loaded dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- System Overview -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>System Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Active Components</h6>
+                                    <div class="metric-value" id="active-components">0/0</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>CPU Usage</h6>
+                                    <div class="metric-value" id="cpu-usage">0%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>Memory Usage</h6>
+                                    <div class="metric-value" id="memory-usage">0 MB</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-card">
+                                    <h6>GPU Status</h6>
+                                    <div class="metric-value" id="gpu-status">Not Detected</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performance-chart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Component Details -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Component Details</h5>
+                    </div>
+                    <div class="card-body" id="component-details">
+                        <p class="text-muted">Select a component to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Control Modal -->
+    <div class="modal fade" id="controlModal" tabindex="-1" role="dialog" aria-labelledby="controlModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="controlModalLabel">System Control</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="control-options">
+                        <button class="btn btn-success" id="start-all-btn">Start All Components</button>
+                        <button class="btn btn-danger" id="stop-all-btn">Stop All Components</button>
+                        <button class="btn btn-warning" id="restart-btn">Restart System</button>
+                    </div>
+                    <hr>
+                    <h6>Advanced Options</h6>
+                    <div class="form-group">
+                        <label for="worker-count">Worker Threads</label>
+                        <input type="number" class="form-control" id="worker-count" min="1" max="16" value="4">
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="gpu-acceleration">
+                        <label class="form-check-label" for="gpu-acceleration">Enable GPU Acceleration</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-settings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Dashboard functionality will be implemented here
+        $(document).ready(function() {
+            // Fetch system status
+            function updateSystemStatus() {
+                $.getJSON('/api/status', function(data) {
+                    // Update component list
+                    let componentList = $('#component-list');
+                    componentList.empty();
+                    
+                    let activeCount = 0;
+                    
+                    if (data.components) {
+                        data.components.forEach(function(component) {
+                            if (component.running) activeCount++;
+                            
+                            componentList.append(`
+                                <li class="list-group-item d-flex justify-content-between align-items-center component-item" 
+                                    data-name="${component.name}">
+                                    ${component.name}
+                                    <span class="badge ${component.running ? 'badge-success' : 'badge-secondary'} badge-pill">
+                                        ${component.running ? 'Active' : 'Inactive'}
+                                    </span>
+                                </li>
+                            `);
+                        });
+                        
+                        $('#active-components').text(`${activeCount}/${data.components.length}`);
+                    }
+                    
+                    // Update GPU status
+                    if (data.gpu && data.gpu.has_cuda) {
+                        $('#gpu-status').text(`Active (${data.gpu.gpu_count} GPUs)`);
+                    }
+                });
+            }
+            
+            // Initial update
+            updateSystemStatus();
+            
+            // Update every 5 seconds
+            setInterval(updateSystemStatus, 5000);
+            
+            // Component selection
+            $(document).on('click', '.component-item', function() {
+                let componentName = $(this).data('name');
+                
+                // Highlight selected component
+                $('.component-item').removeClass('active');
+                $(this).addClass('active');
+                
+                // Fetch component details
+                $.getJSON(`/api/component/${componentName}`, function(data) {
+                    let detailsHtml = `
+                        <h4>${data.name}</h4>
+                        <p><strong>Status:</strong> ${data.running ? 'Active' : 'Inactive'}</p>
+                        <p><strong>Using GPU:</strong> ${data.using_gpu ? 'Yes' : 'No'}</p>
+                        
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm ${data.running ? 'btn-danger' : 'btn-success'}" 
+                                id="toggle-component" data-name="${data.name}" data-action="${data.running ? 'stop' : 'start'}">
+                                ${data.running ? 'Stop' : 'Start'} Component
+                            </button>
+                            <button class="btn btn-sm btn-info" id="view-logs" data-name="${data.name}">
+                                View Logs
+                            </button>
+                        </div>
+                    `;
+                    
+                    $('#component-details').html(detailsHtml);
+                }).fail(function() {
+                    $('#component-details').html(`<p class="text-danger">Error loading component details for ${componentName}</p>`);
+                });
+            });
+            
+            // Sample performance chart
+            const ctx = document.getElementById('performance-chart').getContext('2d');
+            const performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 20}, (_, i) => i),
+                    datasets: [{
+                        label: 'CPU Usage',
+                        data: Array.from({length: 20}, () => Math.floor(Math.random() * 50) + 10),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }, {
+                        label: 'Memory Usage',
+                        data: Array.from({length: 20}, () => Math.floor(Math.random() * 40) + 20),
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Component control
+            $(document).on('click', '#toggle-component', function() {
+                const componentName = $(this).data('name');
+                const action = $(this).data('action');
+                
+                $.ajax({
+                    url: `/api/${action}_component`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({name: componentName}),
+                    success: function(response) {
+                        updateSystemStatus();
+                        alert(`Component ${componentName} ${action}ed successfully`);
+                    },
+                    error: function() {
+                        alert(`Failed to ${action} component ${componentName}`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Automated Viral Master System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Viral Master System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#status">System Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#components">Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metrics">Metrics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-4">Hyper-Automated Viral Master System</h1>
+                <p class="lead">Advanced control panel for system orchestration and monitoring</p>
+                <hr>
+            </div>
+        </div>
+
+        <!-- System Status Section -->
+        <section id="status" class="my-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2>System Status</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">System Health</div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Overall Status:</span>
+                                        <span class="badge bg-success" id="system-status">Operational</span>
+                                    </div>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar" role="progressbar" style="width: 85%;" id="system-health">85%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">Resources</div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <span>CPU Usage:</span>
+                                        <span id="cpu-usage">43%</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Memory Usage:</span>
+                                        <span id="memory-usage">2.7GB / 8GB</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>GPU Usage:</span>
+                                        <span id="gpu-usage">27%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Component Management Section -->
+        <section id="components" class="my-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2>Component Management</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Status</th>
+                                    <th>Performance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="component-list">
+                                <!-- Component rows will be injected here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Visualization Section -->
+        <section id="metrics" class="my-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h2>Metrics Visualization</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="performance-chart" height="250"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="distribution-chart" height="250"></canvas>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">Real-time Analytics</div>
+                                <div class="card-body">
+                                    <div id="analytics-container">
+                                        <p>Waiting for data...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize components table
+        function loadComponents() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    const componentList = document.getElementById('component-list');
+                    componentList.innerHTML = '';
+                    
+                    if (data.components) {
+                        data.components.forEach(component => {
+                            const row = document.createElement('tr');
+                            const statusBadge = component.running ? 
+                                '<span class="badge bg-success">Running</span>' : 
+                                '<span class="badge bg-danger">Stopped</span>';
+                            
+                            row.innerHTML = `
+                                <td>${component.name}</td>
+                                <td>${statusBadge}</td>
+                                <td><div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: ${Math.random() * 100}%;"></div>
+                                </div></td>
+                                <td>
+                                    <button class="btn btn-sm btn-${component.running ? 'danger' : 'success'}" 
+                                        onclick="toggleComponent('${component.name}', ${component.running})">
+                                        ${component.running ? 'Stop' : 'Start'}
+                                    </button>
+                                    <button class="btn btn-sm btn-warning">Restart</button>
+                                </td>
+                            `;
+                            componentList.appendChild(row);
+                        });
+                    } else {
+                        componentList.innerHTML = '<tr><td colspan="4">No components available</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading components:', error);
+                    document.getElementById('component-list').innerHTML = 
+                        '<tr><td colspan="4">Error loading components</td></tr>';
+                });
+        }
+
+        // Toggle component state
+        function toggleComponent(name, isRunning) {
+            const action = isRunning ? 'stop_component' : 'start_component';
+            fetch(`/api/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                loadComponents(); // Refresh the component list
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performance-chart').getContext('2d');
+            const perfChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 12 }, (_, i) => `${i*5}min`),
+                    datasets: [{
+                        label: 'System Performance',
+                        data: Array.from({ length: 12 }, () => Math.floor(Math.random() * 100)),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'System Performance Over Time'
+                        }
+                    }
+                }
+            });
+
+            // Distribution Chart
+            const distCtx = document.getElementById('distribution-chart').getContext('2d');
+            const distChart = new Chart(distCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['AI Orchestrator', 'Viral Orchestrator', 'Analytics Engine', 'Distribution Manager'],
+                    datasets: [{
+                        data: [25, 30, 15, 30],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Resource Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComponents();
+            initCharts();
+            
+            // Simulate real-time updates
+            setInterval(function() {
+                document.getElementById('cpu-usage').textContent = Math.floor(Math.random() * 60) + 20 + '%';
+                document.getElementById('memory-usage').textContent = (Math.random() * 4 + 1).toFixed(1) + 'GB / 8GB';
+                document.getElementById('gpu-usage').textContent = Math.floor(Math.random() * 50) + 10 + '%';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Automated Viral Master System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Additional custom styles */
+        .status-card {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .health-indicator {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+        }
+        .health-indicator.healthy {
+            background-color: #28a745;
+        }
+        .health-indicator.warning {
+            background-color: #ffc107;
+            color: #343a40;
+        }
+        .health-indicator.critical {
+            background-color: #dc3545;
+        }
+        .metric-card {
+            border-left: 5px solid #007bff;
+        }
+        .ai-card {
+            border-left: 5px solid #6f42c1;
+        }
+        .viral-card {
+            border-left: 5px solid #fd7e14;
+        }
+        .system-stats-card {
+            border-left: 5px solid #20c997;
+        }
+        .dark-mode {
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+        .realtime-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .realtime-indicator.active {
+            background-color: #28a745;
+            box-shadow: 0 0 10px #28a745;
+            animation: pulse 2s infinite;
+        }
+        .realtime-indicator.inactive {
+            background-color: #dc3545;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+        .component-card {
+            transition: all 0.3s ease;
+        }
+        .component-card:hover {
+            background-color: #f8f9fa;
+        }
+        .content-preview {
+            height: 150px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        #alerts-panel {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-virus2"></i> Hyper-Automated Viral Master System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#system-status"><i class="bi bi-heart-pulse"></i> System Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#component-management"><i class="bi bi-gear"></i> Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ai-orchestration"><i class="bi bi-cpu"></i> AI Orchestration</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#viral-content"><i class="bi bi-share"></i> Viral Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metrics-visualization"><i class="bi bi-graph-up"></i> Metrics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#system-settings"><i class="bi bi-sliders"></i> Settings</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="text-light me-3">
+                        <div class="d-flex align-items-center">
+                            <div class="realtime-indicator {{ 'active' if realtime_active else 'inactive' }}"></div>
+                            <span>Realtime</span>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-dark position-relative" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell"></i>
+                            {% if notification_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                                {{ notification_count }}
+                                <span class="visually-hidden">unread notifications</span>
+                            </span>
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            {% if notifications %}
+                                {% for notification in notifications %}
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <small class="text-muted">{{ notification.time }}</small>
+                                        <p class="mb-0 {{ 'text-danger' if notification.level == 'critical' else 'text-warning' if notification.level == 'warning' else '' }}">
+                                            {{ notification.message }}
+                                        </p>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% endfor %}
+                            {% else %}
+                                <li><a class="dropdown-item" href="#">No new notifications</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item text-primary" href="#notifications">View all notifications</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown ms-3">
+                        <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Admin
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#profile"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#settings"><i class="bi bi-gear"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#theme" id="toggle-theme"><i class="bi bi-moon"></i> Dark Mode</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#logout"><i class="bi bi-box-arrow-right"></i> Log out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+        <!-- Quick Stats Dashboard -->
+        <section id="dashboard" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card status-card mb-3 bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Active Components</h6>
+                                    <h2 class="display-4 fw-bold">{{ active_components|default(0) }}/{{ total_components|default(0) }}</h2>
+                                </div>
+                                <i class="bi bi-cpu fs-1"></i>
+                            </div>
+                            <div class="progress mt-3" style="height: 10px;">
+                                <div class="progress-bar bg-white" role="progressbar" style="width: {{ (active_components/total_components*100)|default(0)|int }}%;" 
+                                    aria-valuenow="{{ active_components|default(0) }}" aria-valuemin="0" aria-valuemax="{{ total_components|default(0) }}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card status-card mb-3 bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Viral Reach Today</h6>
+                                    <h2 class="display-4 fw-bold">{{ viral_reach_today|default('0') }}</h2>
+                                </div>
+                                <i class="bi bi-graph-up-arrow fs-1"></i>
+                            </div>
+                            <p class="card-text mt-3">
+                                <i class="bi {{ 'bi-arrow-up' if reach_trend > 0 else 'bi-arrow-down' }}"></i>
+                                {{ reach_trend_percent|default('0') }}% from yesterday
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card status-card mb-3 bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">AI Processing Jobs</h6>
+                                    <h2 class="display-4 fw-bold">{{ ai_jobs|default('0') }}</h2>
+                                </div>
+                                <i class="bi bi-robot fs-1"></i>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <small>{{ ai_jobs_queued|default('0') }} queued</small>
+                                <small>{{ ai_jobs_processing|default('0') }} processing</small>
+                                <small>{{ ai_jobs_completed|default('0') }} completed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card status-card mb-3 {{ 'bg-success' if system_health == 'healthy' else 'bg-warning' if system_health == 'warning' else 'bg-danger' }} text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">System Health</h6>
+                                    <h2 class="display-4 fw-bold">{{ system_health|default('Unknown')|title }}</h2>
+                                </div>
+                                <i class="bi {{ 'bi-check-circle' if system_health == 'healthy' else 'bi-exclamation-triangle' if system_health == 'warning' else 'bi-x-circle' }} fs-1"></i>
+                            </div>
+                            <p class="card-text mt-3">
+                                {{ health_message|default('System status information not available') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Status Section -->
+        <section id="system-status" class="mb-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>System Status</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-3 system-stats-card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">System Resources</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label d-flex justify-content-between">
+                                            <span>CPU Usage</span>
+                                            <span>{{ cpu_usage|default(0) }}%</span>
+                                        </label>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar {{ 'bg-success' if cpu_usage < 50 else 'bg-warning' if cpu_usage < 
+

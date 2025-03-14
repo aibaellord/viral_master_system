@@ -1,0 +1,62 @@
+{
+  "components": [
+    {
+      "name": "AI Orchestrator",
+      "module": "core.engine.ai_orchestrator",
+      "class": "AIOrchestratorEngine",
+      "enabled": true
+    },
+    {
+      "name": "Viral Orchestrator",
+      "module": "core.engine.viral_orchestrator",
+      "class": "ViralOrchestratorEngine",
+      "enabled": true
+    },
+    {
+      "name": "Analytics Engine",
+      "module": "core.analytics.analytics_engine",
+      "class": "AnalyticsEngine",
+      "enabled": true
+    },
+    {
+      "name": "Distribution Manager",
+      "module": "core.distribution.distribution_manager",
+      "class": "DistributionManager",
+      "enabled": true
+    },
+    {
+      "name": "Reality Manipulator",
+      "module": "core.engine.reality_manipulator",
+      "class": "RealityManipulatorEngine",
+      "enabled": true
+    },
+    {
+      "name": "Content Optimizer",
+      "module": "core.engine.content_optimizer",
+      "class": "ContentOptimizerEngine",
+      "enabled": true
+    },
+    {
+      "name": "Performance Monitor",
+      "module": "core.engine.monitoring_system",
+      "class": "MonitoringSystem",
+      "enabled": true
+    },
+    {
+      "name": "Security Manager",
+      "module": "core.engine.security_manager",
+      "class": "SecurityManagerEngine",
+      "enabled": true
+    }
+  ],
+  "system_settings": {
+    "log_level": "INFO",
+    "max_workers": 4,
+    "auto_recovery": true,
+    "monitoring_interval": 60,
+    "default_gpu_usage": true,
+    "api_port": 5000,
+    "dashboard_enabled": true
+  }
+}
+

@@ -1,0 +1,84 @@
+:root {
+    --primary-color: #1a73e8;
+    --secondary-color: #34a853;
+    --warning-color: #fbbc05;
+    --error-color: #ea4335;
+    --background-color: #f8f9fa;
+    --card-background: #ffffff;
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
+    --border-color: #dadce0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+#dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+.section {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.section h2 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+/* Gauge Charts */
+.gauge-chart {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+/* Line Charts */
+.line-chart {
+    width: 100%;
+    height: 250px;
+}
+
+/* Bar Charts */
+.bar-chart {
+    width: 100%;
+    height: 250px;
+}
+
+/* Heatmap */
+.heatmap {
+    width: 100%;
+    height: 300px;
+}
+
+/* Radar Chart */
+.radar-chart {
+    width: 300px;
+    height: 300
+

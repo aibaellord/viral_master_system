@@ -1,0 +1,139 @@
+/* Hyper-Automated Viral Master System Dashboard Styles */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar and status indicator */
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.status-active, .status-inactive {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-active {
+    background-color: #28a745;
+    box-shadow: 0 0 10px #28a745;
+    animation: pulse 2s infinite;
+}
+
+.status-inactive {
+    background-color: #dc3545;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+/* Cards and containers */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: none;
+}
+
+.card-header {
+    background-color: #f1f4f9;
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 16px;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #3a3f51;
+}
+
+.sidebar {
+    height: calc(100vh - 120px);
+    position: sticky;
+    top: 90px;
+}
+
+/* Component list */
+.component-list {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.component-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.component-item:hover {
+    background-color: #f8f9fa;
+}
+
+.component-item.active {
+    background-color: #e9ecef;
+    border-left: 3px solid #007bff;
+}
+
+/* Metrics */
+.metric-card {
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.metric-card h6 {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* Component details */
+#component-details {
+    min-height: 200px;
+}
+
+.btn-group {
+    margin-top: 16px;
+}
+
+/* Controls */
+.control-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    
+
