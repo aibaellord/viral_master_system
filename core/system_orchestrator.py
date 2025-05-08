@@ -440,28 +440,57 @@ class SystemOrchestrator:
         return self.metrics
 
 if __name__ == "__main__":
-    # Example usage
+    import asyncio
+    import logging
+
     async def main():
         orchestrator = SystemOrchestrator()
-        
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger("system_orchestrator_demo")
+
         # Initialize system
         if await orchestrator.initialize_system():
+            logger.info("System initialized.")
             # Synchronize components
             await orchestrator.synchronize_components()
-            
-            # Start monitoring
+            logger.info("Components synchronized.")
+
+            # Launch readiness check
+            if hasattr(orchestrator, "launch_readiness_check"):
+                readiness = orchestrator.launch_readiness_check()
+                logger.info(f"Launch readiness: {readiness}")
+
+            # System analysis
+            if hasattr(orchestrator, "analyze_system"):
+                analysis = orchestrator.analyze_system()
+                logger.info(f"System analysis: {analysis}")
+
+            # Demonstrate revenue forecasting
+            if hasattr(orchestrator, "forecast_revenue"):
+                earnings = orchestrator.forecast_revenue(traffic=10000, ctr=0.05, cr=0.02, aov=30.0)
+                logger.info(f"Expected earnings for 10k visitors: ${earnings:.2f}")
+
+            # UI/UX trigger example
+            if hasattr(orchestrator, "ui_trigger"):
+                orchestrator.ui_trigger("launch_dashboard", {"status": "ready", "expected_earnings": earnings})
+
+            # Start monitoring loop
             while True:
                 metrics = await orchestrator.monitor_performance()
-                
+                logger.info(f"Performance metrics: {metrics}")
+
                 # Optimize if needed
                 if metrics.quantum_stability < 0.9:
                     await orchestrator.optimize_resources()
-                
+                    logger.info("Resources optimized.")
+
                 # Evolve if conditions are met
                 if metrics.consciousness_coherence > 0.95:
                     await orchestrator.evolve_system()
-                
-                await asyncio.sleep(1)
+                    logger.info("System evolved.")
+                await asyncio.sleep(5)
+
+    asyncio.run(main())
 
     asyncio.run(main())
 
