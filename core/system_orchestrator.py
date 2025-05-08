@@ -23,13 +23,54 @@ class SystemOrchestrator:
     """
     
     def __init__(self):
+        from core.engine.rl_automl_engine import RLAutoMLEngine
+        import importlib
+        import os
         self.trigger_system = TriggerSystem()
         self.growth_accelerator = GrowthAccelerator()
         self.distributor = AdvancedDistributor()
         self.performance_optimizer = PerformanceOptimizer()
+        self.rl_automl_engine = RLAutoMLEngine()
+        self.platform_plugins = {}
+        self._load_platform_plugins()
         
         self.logger = logging.getLogger(__name__)
         self._initialize_logging()
+
+    def _load_platform_plugins(self):
+        """Dynamically load all platform plugins from core/platforms/ directory."""
+        import importlib.util
+        import pathlib
+        plugin_dir = pathlib.Path(__file__).parent.parent / "platforms"
+        for plugin_file in plugin_dir.glob("*_platform_plugin.py"):
+            if plugin_file.name == "platform_plugin_base.py":
+                continue
+            module_name = f"core.platforms.{plugin_file.stem}"
+            spec = importlib.util.spec_from_file_location(module_name, str(plugin_file))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            for attr in dir(module):
+                obj = getattr(module, attr)
+                try:
+                    from core.platforms.platform_plugin_base import PlatformPluginBase
+                    if isinstance(obj, type) and issubclass(obj, PlatformPluginBase) and obj is not PlatformPluginBase:
+                        plugin_instance = obj()
+                        self.platform_plugins[plugin_instance.get_platform_name()] = plugin_instance
+                except Exception:
+                    continue
+
+    def optimize_campaign_with_rl(self, env_fn, policy="MlpPolicy", timesteps=10000):
+        """Optimize campaign/content strategy using RL agent."""
+        agent_name = f"campaign_{policy}"
+        self.rl_automl_engine.register_rl_agent(agent_name, env_fn, policy)
+        self.rl_automl_engine.train_agent(agent_name, timesteps)
+        return agent_name
+
+    def automl_optimize(self, objective_fn, n_trials=50):
+        """Optimize hyperparameters/model selection using AutoML."""
+        study_name = f"automl_{objective_fn.__name__}"
+        self.rl_automl_engine.register_automl(study_name, objective_fn, n_trials)
+        return self.rl_automl_engine.optimize(study_name)
         
     def _initialize_logging(self):
         """Configure detailed logging for system monitoring"""
