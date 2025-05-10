@@ -1,0 +1,72 @@
+2025-05-08 23:05:03,461 - ViralMasterSystem - INFO - System configuration loaded successfully
+2025-05-08 23:05:03,461 - ViralMasterSystem - WARNING - GPU configuration not found. Running in CPU-only mode.
+2025-05-08 23:05:03,461 - ViralMasterSystem - INFO - Starting system initialization
+2025-05-08 23:05:03,461 - ViralMasterSystem - INFO - Initializing component: AI Orchestrator
+2025-05-08 23:05:03,461 - ViralMasterSystem - INFO - Initializing component: Viral Orchestrator
+2025-05-08 23:05:03,461 - ViralMasterSystem - INFO - Initializing component: Analytics Engine
+2025-05-08 23:05:03,462 - ViralMasterSystem - INFO - Initializing component: Distribution Manager
+2025-05-08 23:05:03,465 - ViralMasterSystem - ERROR - Failed to initialize component Viral Orchestrator: unterminated string literal (detected at line 664) (viral_orchestrator.py, line 664)
+2025-05-08 23:05:03,465 - ViralMasterSystem - INFO - Initializing component: Reality Manipulator
+2025-05-08 23:05:03,514 - core.engine.reality_manipulator - WARNING - PyTorch or CUDA libraries not available. Falling back to CPU processing.
+2025-05-08 23:05:03,515 - ViralMasterSystem - ERROR - Failed to initialize component Analytics Engine: No module named 'pandas'
+2025-05-08 23:05:03,515 - ViralMasterSystem - INFO - Initializing component: Content Optimizer
+2025-05-08 23:05:03,515 - core.engine.reality_manipulator - WARNING - Quantum computing libraries not available. Using classical simulation.
+2025-05-08 23:05:03,515 - ViralMasterSystem - ERROR - Failed to initialize component Reality Manipulator: name 'torch' is not defined
+2025-05-08 23:05:03,515 - ViralMasterSystem - ERROR - Failed to initialize component AI Orchestrator: cannot import name 'RealityManipulator' from 'core.engine.reality_manipulator' (/Users/thealchemist/Documents/GitHub/viral_master_system/core/engine/reality_manipulator.py)
+2025-05-08 23:05:03,515 - ViralMasterSystem - INFO - Initializing component: Performance Monitor
+2025-05-08 23:05:03,515 - ViralMasterSystem - INFO - Initializing component: Security Manager
+2025-05-08 23:05:03,518 - ViralMasterSystem - ERROR - Failed to initialize component Content Optimizer: expected 'except' or 'finally' block (content_optimizer.py, line 424)
+2025-05-08 23:05:03,519 - core.engine.reality_manipulator - WARNING - PyTorch or CUDA libraries not available. Falling back to CPU processing.
+2025-05-08 23:05:03,519 - core.engine.reality_manipulator - WARNING - Quantum computing libraries not available. Using classical simulation.
+2025-05-08 23:05:03,519 - ViralMasterSystem - ERROR - Failed to initialize component Performance Monitor: name 'torch' is not defined
+2025-05-08 23:05:03,572 - ViralMasterSystem - INFO - Component Distribution Manager initialized successfully
+2025-05-08 23:05:03,576 - ViralMasterSystem - ERROR - Failed to initialize component Security Manager: 'core.engine'
+2025-05-08 23:05:03,577 - ViralMasterSystem - INFO - System initialization complete. 1 components running.
+2025-05-08 23:05:03,577 - ViralMasterSystem - INFO - Starting all system components
+2025-05-08 23:05:03,578 - ViralSystem.DistributionManager - INFO - Distribution Manager starting up...
+2025-05-08 23:05:03,578 - ViralSystem.DistributionManager - INFO - DistributionManager started
+2025-05-08 23:05:03,578 - ViralSystem.DistributionManager - INFO - Initializing distribution platforms
+2025-05-08 23:05:03,578 - ViralMasterSystem - INFO - All components started
+2025-05-08 23:05:03,578 - ViralSystem.DistributionManager - INFO - Registering new platform: social_alpha
+2025-05-08 23:05:03,580 - core.engine.reality_manipulator - WARNING - PyTorch or CUDA libraries not available. Falling back to CPU processing.
+2025-05-08 23:05:03,580 - core.engine.reality_manipulator - WARNING - Quantum computing libraries not available. Using classical simulation.
+2025-05-08 23:05:03,580 - ViralMasterSystem - ERROR - Failed to start monitoring system: name 'torch' is not defined
+2025-05-08 23:19:31,428 - ViralSystem.Initializer - INFO - Checking system dependencies...
+2025-05-08 23:19:35,992 - ViralSystem.Initializer - WARNING - Missing Python packages: pandas, flask, requests, matplotlib, transformers
+2025-05-08 23:19:35,993 - ViralSystem.Initializer - ERROR - Please run ./install_dependencies.sh to install required packages
+2025-05-08 23:19:35,993 - ViralSystem.Initializer - ERROR - Dependency check failed, aborting startup
+2025-05-08 23:24:49,907 - ViralMasterSystem - INFO - System configuration loaded successfully
+2025-05-08 23:24:49,908 - ViralMasterSystem - WARNING - GPU configuration not found. Running in CPU-only mode.
+2025-05-08 23:24:49,908 - ViralMasterSystem - INFO - Starting system initialization
+2025-05-08 23:24:49,908 - ViralMasterSystem - INFO - Initializing component: AI Orchestrator
+2025-05-08 23:24:49,908 - ViralMasterSystem - INFO - Initializing component: Viral Orchestrator
+2025-05-08 23:24:49,908 - ViralMasterSystem - INFO - Initializing component: Analytics Engine
+2025-05-08 23:24:49,909 - ViralMasterSystem - INFO - Initializing component: Distribution Manager
+2025-05-08 23:24:49,916 - ViralMasterSystem - ERROR - Failed to initialize component Viral Orchestrator: unterminated string literal (detected at line 664) (viral_orchestrator.py, line 664)
+2025-05-08 23:24:49,916 - ViralMasterSystem - INFO - Initializing component: Reality Manipulator
+2025-05-08 23:24:49,974 - ViralMasterSystem - ERROR - Failed to initialize component Analytics Engine: No module named 'pandas'
+2025-05-08 23:24:49,974 - ViralMasterSystem - INFO - Initializing component: Content Optimizer
+2025-05-08 23:24:49,978 - ViralMasterSystem - ERROR - Failed to initialize component Content Optimizer: expected 'except' or 'finally' block (content_optimizer.py, line 424)
+2025-05-08 23:24:49,978 - ViralMasterSystem - INFO - Initializing component: Performance Monitor
+2025-05-08 23:24:50,244 - ViralMasterSystem - INFO - Component Distribution Manager initialized successfully
+2025-05-08 23:24:50,246 - ViralMasterSystem - INFO - Initializing component: Security Manager
+2025-05-08 23:24:50,249 - ViralMasterSystem - ERROR - Failed to initialize component Performance Monitor: No module named 'sklearn'
+2025-05-08 23:24:50,258 - ViralMasterSystem - ERROR - Failed to initialize component Security Manager: module 'core.engine.security_manager' has no attribute 'SecurityManagerEngine'
+2025-05-08 23:24:50,904 - core.engine.reality_manipulator - WARNING - Quantum computing libraries not available. Using classical simulation.
+2025-05-08 23:24:50,905 - ViralSystem.Reality Manipulator - INFO - Reality Manipulator Engine initialized
+2025-05-08 23:24:50,905 - ViralMasterSystem - INFO - Component Reality Manipulator initialized successfully
+2025-05-08 23:24:50,909 - ViralMasterSystem - ERROR - Failed to initialize component AI Orchestrator: expected ':' (reality_manipulation_engine.py, line 369)
+2025-05-08 23:24:50,911 - ViralMasterSystem - INFO - System initialization complete. 2 components running.
+2025-05-08 23:24:50,912 - ViralMasterSystem - INFO - Starting all system components
+2025-05-08 23:24:50,912 - ViralSystem.DistributionManager - INFO - Distribution Manager starting up...
+2025-05-08 23:24:50,912 - ViralSystem.DistributionManager - INFO - Initializing distribution platforms
+2025-05-08 23:24:50,912 - ViralSystem.DistributionManager - INFO - DistributionManager started
+2025-05-08 23:24:50,913 - ViralSystem.DistributionManager - INFO - Registering new platform: social_alpha
+2025-05-08 23:24:50,916 - ViralSystem.Reality Manipulator - WARNING - Default run method called in Reality Manipulator. Should be overridden.
+2025-05-08 23:24:50,921 - ViralSystem.Reality Manipulator - INFO - Reality Manipulator started
+2025-05-08 23:24:50,923 - ViralMasterSystem - INFO - All components started
+2025-05-08 23:24:50,958 - ViralMasterSystem - ERROR - Failed to start monitoring system: expected ':' (reality_manipulation_engine.py, line 369)
+2025-05-08 23:25:22,222 - ViralSystem.Initializer - INFO - Checking system dependencies...
+2025-05-08 23:25:23,241 - ViralSystem.Initializer - WARNING - Missing Python packages: pandas, flask, requests, matplotlib, transformers
+2025-05-08 23:25:23,241 - ViralSystem.Initializer - ERROR - Please run ./install_dependencies.sh to install required packages
+2025-05-08 23:25:23,241 - ViralSystem.Initializer - ERROR - Dependency check failed, aborting startup

@@ -1,4 +1,4 @@
-#!/Users/thealchemist/hyper_automated_system/viral_master_system/.venv/bin/python3
+#!/Users/thealchemist/Documents/GitHub/viral_master_system/.venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys
